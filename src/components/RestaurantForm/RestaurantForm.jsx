@@ -21,6 +21,7 @@ class RestaurantForm extends Component {
     error: {
       name: "",
       address: "",
+      cuisineId: "",
       averagePrice: "",
       imageUrl: ""
     }
@@ -179,7 +180,8 @@ class RestaurantForm extends Component {
             label="Cuisine"
             options={cuisines}
             onChange={this.handleChange}
-            value={cuisineId}/>
+            value={cuisineId}
+            error={error.cuisineId}/>
           <Input
             name="averagePrice"
             label="Average Price"
