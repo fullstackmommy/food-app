@@ -17,38 +17,52 @@ class RestaurantForm extends Component {
       cuisineId: "",
       averagePrice: "",
       imageUrl: ""
+    },
+    error: {
+      name: "",
+      address: "",
+      averagePrice: "",
+      imageUrl: ""
     }
   };
 
-  schema = Joi
-    .object()
-    .keys({
-      _id: Joi.string(),
-      name: Joi
-        .string()
-        .required(),
-      address: Joi
-        .string()
-        .required(),
-      openingTime: Joi
-        .string()
-        .required(),
-      closingTime: Joi
-        .string()
-        .required(),
-      cuisineId: Joi
-        .string()
-        .required(),
-      averagePrice: Joi
-        .number()
-        .integer()
-        .min(1)
-        .required(),
-      imageUrl: Joi
-        .string()
-        .uri({allowRelative: true})
-        .required()
-    })
+  schema = {
+    _id: Joi.string(),
+    name: Joi
+      .string()
+      .required(),
+    address: Joi
+      .string()
+      .required(),
+    openingTime: Joi
+      .string()
+      .required(),
+    closingTime: Joi
+      .string()
+      .required(),
+    cuisineId: Joi
+      .string()
+      .required(),
+    averagePrice: Joi
+      .number()
+      .integer()
+      .min(1)
+      .required(),
+    imageUrl: Joi
+      .string()
+      .uri({allowRelative: true})
+      .required()
+  }
+
+  validateField = (inputName, value) => {
+    const schema = {
+      [inputName]: this.schema[inputName]
+    }
+    const result = Joi.validate({
+      [inputName]: value
+    }, schema)
+    return result.error;
+  }
 
   validate = () => {
     const option = {
@@ -100,15 +114,29 @@ class RestaurantForm extends Component {
   };
 
   handleChange = ({currentTarget: input}) => {
+    const copy = {
+      ...this.state.error
+    }
+
+    const isInvalid = this.validateField(input.name, input.value)
+    if (isInvalid) {
+      copy[input.name] = isInvalid.details[0].message
+      this.setState({error: copy})
+    } else {
+      copy[input.name] = ""
+      this.setState({error: copy})
+    }
+
     const data = {
       ...this.state.data
     };
     data[input.name] = input.value;
     this.setState({data});
+
   };
 
   render() {
-    const {cuisines} = this.state;
+    const {cuisines, error} = this.state;
     const {
       name,
       address,
@@ -124,12 +152,18 @@ class RestaurantForm extends Component {
             ? "Edit Restaurant"
             : "New Restaurant"}</h3>
         <form onSubmit={this.handleSubmit}>
-          <Input name="name" label="Name" onChange={this.handleChange} value={name}/>
+          <Input
+            name="name"
+            label="Name"
+            onChange={this.handleChange}
+            value={name}
+            error={error.name}/>
           <Input
             name="address"
             label="Address"
             onChange={this.handleChange}
-            value={address}/>
+            value={address}
+            error={error.address}/>
           <TimeInput
             name="openingTime"
             label="Opening Time"
@@ -151,12 +185,14 @@ class RestaurantForm extends Component {
             label="Average Price"
             type="number"
             onChange={this.handleChange}
-            value={averagePrice}/>
+            value={averagePrice}
+            error={error.averagePrice}/>
           <Input
             name="imageUrl"
             label="Image URL"
             onChange={this.handleChange}
-            value={imageUrl}/>
+            value={imageUrl}
+            error={error.imageUrl}/>
           <button className="btn btn-primary btn-sm" disabled={this.validate()}>Save</button>
         </form>
       </div>

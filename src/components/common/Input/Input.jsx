@@ -5,7 +5,8 @@ function Input({
   label,
   type = "text",
   onChange,
-  value
+  value,
+  error
 }) {
   return (
     <div className="form-group">
@@ -26,8 +27,11 @@ function Input({
           name={name}
           onChange={onChange}
           value={value}/>)}
+      {error && <div className="alert alert-danger">
+        {error}
+      </div>}
     </div>
-  );
+  )
 }
 
 export default Input;
