@@ -108,7 +108,6 @@ class RestaurantForm extends Component {
   };
 
   render() {
-
     const {cuisines} = this.state;
     const {
       name,
@@ -158,7 +157,7 @@ class RestaurantForm extends Component {
             label="Image URL"
             onChange={this.handleChange}
             value={imageUrl}/>
-          <button className="btn btn-primary btn-sm">Save</button>
+          <button className="btn btn-primary btn-sm" disabled={this.validate()}>Save</button>
         </form>
       </div>
     );
